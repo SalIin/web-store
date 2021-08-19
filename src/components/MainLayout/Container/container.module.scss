@@ -1,0 +1,12 @@
+@import "../../../styles/variables.scss";
+
+.Container {
+  max-width: 90%;
+  margin: 0 auto;
+  padding-top: $header-height;
+  min-height: 100%;
+}
+
+.Container_fullHeight {
+  height: 100vh;
+}
