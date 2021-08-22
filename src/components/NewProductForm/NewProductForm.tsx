@@ -10,6 +10,7 @@ import { Loader } from "../Loader/Loader";
 
 import { createProduct, generateId } from "../../utils";
 import styles from "./new-product-form.module.scss";
+import { storage } from "../../firebase";
 
 export interface NewProductFormInputs {
   title: string;
@@ -44,17 +45,31 @@ export const NewProductForm: React.FC = () => {
 
   const onSubmit = (data: any) => {
     setLoading(true);
-    const img = URL.createObjectURL(data.image[0]);
+    const img = data.image[0];
     delete data.image;
 
-    createProduct({
-      id: generateId(),
-      img,
-      ...data,
-    }).then(() => {
-      setLoading(false);
-      reset();
-    });
+    const uploadTask = storage.ref(`images/${img.name}`).put(img);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {},
+      (error) => console.log(error),
+      () => {
+        storage
+          .ref("images")
+          .child(img.name)
+          .getDownloadURL()
+          .then((url) => {
+            createProduct({
+              id: generateId(),
+              img: url,
+              ...data,
+            }).then(() => {
+              setLoading(false);
+              reset();
+            });
+          });
+      }
+    );
   };
 
   return (
