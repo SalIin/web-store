@@ -102,6 +102,7 @@ export const ListItem: React.FC<IProduct & IListItemProps> = ({
             [styles["ListItem-FullDescription_shown"]]: isFullDescriptionShown,
           })}
         >
+          <h4>{title}</h4>
           {description}
         </article>
       </div>

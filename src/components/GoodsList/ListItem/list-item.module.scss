@@ -102,6 +102,9 @@
     overflow: scroll;
     transition: all 0.3s ease-in-out;
     transform: translateY(100%);
+    h4 {
+      margin-bottom: 10px;
+    }
   }
   &-FullDescription_shown {
     transform: translateY(0);
