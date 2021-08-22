@@ -1,0 +1,32 @@
+@import "../../styles/variables.scss";
+
+.Button {
+  background-color: transparent;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  color: #fff;
+  padding: 5px 10px;
+  display: inline-block;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: #fff;
+    color: $primary;
+  }
+  &:disabled {
+    background-color: transparent;
+    cursor: not-allowed;
+  }
+}
+
+.Button_l {
+  font-size: 1.1rem;
+  height: $large-button-height;
+}
+.Button_m {
+  font-size: 0.8rem;
+  height: $medium-button-height;
+}

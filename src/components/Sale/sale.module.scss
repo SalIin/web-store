@@ -1,0 +1,16 @@
+.SaleWrapper {
+  display: flex;
+
+  input + div {
+    margin-left: 10px;
+    // input {
+    //   border: 1px solid red;
+    // }
+  }
+}
+
+.Calendar {
+  background-color: #fff;
+  position: absolute;
+  transform: translate(-43%, -115%);
+}

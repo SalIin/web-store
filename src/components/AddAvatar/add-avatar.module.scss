@@ -1,0 +1,43 @@
+@import "../../styles/variables.scss";
+@import "../../styles/mixines.scss";
+
+.AddAvatar {
+  width: 100px;
+  height: 100px;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background-color 0.3s ease-in-out;
+
+  &:hover {
+    background-color: $hover;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  input {
+    @include visuallyHidden;
+  }
+}
+
+.AddAvatar_empty {
+  img {
+    width: 40px;
+    height: 40px;
+  }
+}
+.AddAvatar_error {
+  border: 1px solid $primary-error;
+  img {
+    width: 40px;
+    height: 40px;
+  }
+}

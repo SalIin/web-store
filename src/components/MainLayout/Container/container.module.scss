@@ -2,11 +2,51 @@
 
 .Container {
   max-width: 90%;
+  width: 100%;
   margin: 0 auto;
-  padding-top: $header-height;
+  padding-top: calc(#{$header-height} + 20px);
   min-height: 100%;
+
+  @media screen and (max-width: 600px) {
+    max-width: none;
+    width: 100%;
+  }
 }
 
 .Container_fullHeight {
   height: 100vh;
+  padding-top: $header-height;
+}
+.Container_noGutters {
+  padding: 0;
+}
+
+.Container_display-block {
+  display: block;
+}
+.Container_display-flex {
+  display: flex;
+}
+
+.Container_justify-flex-start {
+  justify-content: flex-start;
+}
+.Container_justify-flex-end {
+  justify-content: flex-end;
+}
+.Container_justify-center {
+  justify-content: center;
+}
+.Container_justify-space-between {
+  justify-content: space-between;
+}
+
+.Container_alignItems-flex-start {
+  align-items: flex-start;
+}
+.Container_alignItems-flex-end {
+  align-items: flex-end;
+}
+.Container_alignItems-center {
+  align-items: center;
 }

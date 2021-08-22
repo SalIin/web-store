@@ -1,0 +1,12 @@
+@import "../../styles/variables.scss";
+@import "../../styles/mixines.scss";
+
+.ProductFormWrapper {
+  @include formStyles;
+  // @include mobileLayout;
+}
+
+.ProductForm {
+  @include formControlStyles;
+  margin-top: 20px;
+}

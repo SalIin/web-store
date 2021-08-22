@@ -1,10 +1,19 @@
 @import "../../styles/variables.scss";
+@import "../../styles/mixines.scss";
 
 .Header {
+  @include mobileLayout;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: $header-height;
   background-color: $primary;
+  color: #fff;
+  z-index: 10;
+
+  &-Logo {
+    text-transform: uppercase;
+    color: inherit;
+  }
 }

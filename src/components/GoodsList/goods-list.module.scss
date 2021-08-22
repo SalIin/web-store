@@ -1,0 +1,21 @@
+@import "../../styles/variables.scss";
+@import "../../styles/mixines.scss";
+
+.GoodsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+
+  @include mobileLayout;
+}
+
+.LoaderWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

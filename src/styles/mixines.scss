@@ -1,0 +1,72 @@
+@import "./variables.scss";
+
+@mixin formStyles {
+  padding: 40px;
+  background-color: $primary;
+  color: #fff;
+  border-radius: 6px;
+  min-width: 300px;
+  width: 470px;
+  max-height: 100%;
+  overflow: scroll;
+
+  @media screen and (max-width: 600px) {
+    max-height: none;
+    border-radius: 0;
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+@mixin visuallyHidden {
+  position: absolute;
+  clip: rect(0 0 0 0);
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+}
+
+@mixin formControlStyles {
+  &-Control {
+    width: 100%;
+  }
+  &-Control[type="password"],
+  &-Control[type="text"],
+  &-Control[type="email"],
+  textarea,
+  input {
+    border: none;
+    border-radius: 6px;
+    background-color: $secondary;
+    margin-top: 20px;
+    padding: 8px;
+    resize: none;
+
+    &::placeholder {
+      font-size: 0.8rem;
+      color: inherit;
+    }
+  }
+  &-Control_withError[type="email"],
+  &-Control_withError[type="text"],
+  &-Control_withError[type="password"] {
+    border: 2px solid $primary-error;
+  }
+  button[type="submit"] {
+    margin-top: 35px;
+    width: 100%;
+  }
+
+  &-Error {
+    color: $primary-error;
+  }
+}
+
+@mixin mobileLayout {
+  @media screen and (max-width: 600px) {
+    padding: 0 20px;
+  }
+}
