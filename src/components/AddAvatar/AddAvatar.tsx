@@ -2,7 +2,7 @@ import React, { ChangeEvent } from "react";
 import { UseFormRegister, FieldErrors } from "react-hook-form";
 import classnames from "classnames";
 
-import { NewProductFormInputs } from "../NewProductForm/NewProductForm";
+import { NewProductFormInputs } from "../ProductForm/ProductForm";
 
 import styles from "./add-avatar.module.scss";
 
@@ -13,6 +13,7 @@ interface IAddAvatarProps {
   clearErrors: any;
   watch: (field: string) => [] | File[];
   errors: FieldErrors<NewProductFormInputs>;
+  previewImage: string | null;
 }
 
 export const AddAvatar: React.FC<IAddAvatarProps> = ({
@@ -22,10 +23,11 @@ export const AddAvatar: React.FC<IAddAvatarProps> = ({
   clearErrors,
   watch,
   errors,
+  previewImage,
 }) => {
   const { onChange, ...rest } = register("image", {
     required: {
-      value: true,
+      value: !previewImage,
       message: "This field is required",
     },
   });
@@ -63,7 +65,7 @@ export const AddAvatar: React.FC<IAddAvatarProps> = ({
       <label
         htmlFor="file-input"
         className={classnames(styles.AddAvatar, {
-          [styles["AddAvatar_empty"]]: !watchImageField.length,
+          [styles["AddAvatar_empty"]]: !watchImageField.length && !previewImage,
           [styles["AddAvatar_error"]]: errors.image,
         })}
         title="Add an image"
@@ -72,6 +74,8 @@ export const AddAvatar: React.FC<IAddAvatarProps> = ({
           src={
             watchImageField.length && !errors.image
               ? URL.createObjectURL(watchImageField[0])
+              : previewImage
+              ? previewImage
               : "/img/photo.svg"
           }
           alt="Avatar"

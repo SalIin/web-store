@@ -7,14 +7,11 @@ import { useProductCard } from "../../../customHooks/useProductCard";
 import { IProduct } from "../../../types";
 
 import styles from "./list-item.module.scss";
+import { Link, useRouteMatch } from "react-router-dom";
 
 // TODO: Высчитать кол-во дней до окончания скидки
 
-interface IListItemProps {
-  setGoods: (goods: IProduct[]) => void;
-}
-
-export const ListItem: React.FC<IProduct & IListItemProps> = ({
+export const ListItem: React.FC<IProduct> = ({
   id,
   title,
   price,
@@ -22,7 +19,6 @@ export const ListItem: React.FC<IProduct & IListItemProps> = ({
   description = "",
   sale = null,
   saleExpiredDay = null,
-  setGoods,
 }) => {
   const {
     isFullDescriptionShown,
@@ -34,7 +30,8 @@ export const ListItem: React.FC<IProduct & IListItemProps> = ({
     handleDeleteProduct,
     toggleMenu,
     countSale,
-  } = useProductCard(saleExpiredDay, price, setGoods);
+  } = useProductCard(saleExpiredDay, price);
+  const { path } = useRouteMatch();
 
   return (
     <li className={styles.ListItem}>
@@ -60,9 +57,11 @@ export const ListItem: React.FC<IProduct & IListItemProps> = ({
               {isMenuOpened && (
                 <ClickAwayListener onClickAway={handleClickAwayMenu}>
                   <menu className={styles["ListItem-Menu"]}>
-                    <li role="button">
-                      <img src="/img/edit.svg" alt="" />
-                      Edit
+                    <li>
+                      <Link to={`${path}/${id}`}>
+                        <img src="/img/edit.svg" alt="" />
+                        Edit
+                      </Link>
                     </li>
                     <li role="button" onClick={() => handleDeleteProduct(id)}>
                       <img src="/img/delete.svg" alt="" />

@@ -1,22 +1,22 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import moment from "moment";
+
+import { deleteProduct } from "../utils";
+import { deleteProductFromStore } from "../redux/actionCreators";
 
 import { IProduct } from "../types";
 
-import moment from "moment";
-import { deleteProduct } from "../utils";
-
 export const useProductCard = (
   saleExpiredDay: IProduct["saleExpiredDay"] | null,
-  price: IProduct["price"],
-  setGoods: (goods: IProduct[]) => void
+  price: IProduct["price"]
 ) => {
   // State
   const [isFullDescriptionShown, setShowFullDescription] = useState(false);
   const [isMenuOpened, setMenuOpened] = useState(false);
 
-  // console.log(saleExpiredDay);
-
   // Variables
+  const dispatch = useDispatch();
   const isSaleDate = saleExpiredDay
     ? moment(saleExpiredDay).isAfter(new Date().getTime() / 1000)
     : null;
@@ -31,10 +31,7 @@ export const useProductCard = (
   const handleClickAwayMenu = () => setMenuOpened(false);
   const handleDeleteProduct = (idToDelete: IProduct["id"]) => {
     deleteProduct(idToDelete).then(() =>
-      // @ts-ignore
-      setGoods((prevGoods: IProduct[]) =>
-        prevGoods.filter(({ id }) => id !== idToDelete)
-      )
+      dispatch(deleteProductFromStore(idToDelete))
     );
   };
 

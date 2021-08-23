@@ -1,11 +1,16 @@
+@import "../../styles/variables.scss";
+
 .SaleWrapper {
   display: flex;
+  margin-top: 20px;
 
-  input + div {
+  input[type="text"],
+  input[placeholder="YYYY-M-D"] {
+    margin-top: 0;
+  }
+
+  & > div {
     margin-left: 10px;
-    // input {
-    //   border: 1px solid red;
-    // }
   }
 }
 
@@ -13,4 +18,9 @@
   background-color: #fff;
   position: absolute;
   transform: translate(-43%, -115%);
+}
+
+.ErrorWrapper {
+  border: 2px solid $primary-error;
+  border-radius: 8px;
 }

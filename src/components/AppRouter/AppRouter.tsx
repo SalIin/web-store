@@ -22,6 +22,11 @@ export const AppRouter: React.FC = () => {
           component={NewProductPage}
           exact
         />
+        <PrivateRoute
+          path={PRIVATE_ROUTES.EDIT_PRODUCT}
+          component={NewProductPage}
+          exact
+        />
       </Switch>
     </BrowserRouter>
   );

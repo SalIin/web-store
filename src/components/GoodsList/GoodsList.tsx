@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { ListItem } from "./ListItem/ListItem";
 import { Loader } from "../Loader/Loader";
@@ -9,11 +10,17 @@ import { IProduct } from "../../types";
 
 import styles from "./goods-list.module.scss";
 
+import { setAllGoods } from "../../redux/actionCreators";
+import { getAllGoodsFromStore } from "../../redux/selectors";
+
 export const GoodsList: React.FC = () => {
-  const [goods, setGoods] = useState<IProduct[]>([]);
+  const dispatch = useDispatch();
+  const goods: readonly IProduct[] = useSelector(getAllGoodsFromStore);
 
   useEffect(() => {
-    getAllGoods().then(setGoods);
+    getAllGoods().then((goods) => {
+      dispatch(setAllGoods(goods));
+    });
   }, []);
 
   if (!goods.length) {
@@ -27,7 +34,7 @@ export const GoodsList: React.FC = () => {
   return (
     <ul className={styles.GoodsList}>
       {goods.map(({ id, ...restProps }) => (
-        <ListItem key={id} id={id} setGoods={setGoods} {...restProps} />
+        <ListItem key={id} id={id} {...restProps} />
       ))}
     </ul>
   );

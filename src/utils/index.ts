@@ -15,6 +15,13 @@ export const createProduct = async (product: IProduct) => {
   await db.collection("goods").doc(product.id).set(product);
 };
 
+export const updateProduct = async (
+  productId: IProduct["id"],
+  product: IProduct
+) => {
+  await db.collection("goods").doc(productId).update(product);
+};
+
 export const deleteProduct = async (id: IProduct["id"]) => {
   await db.collection("goods").doc(id).delete();
 };

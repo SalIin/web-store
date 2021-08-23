@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import classnames from "classnames";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 import DayPickerInput from "react-day-picker/DayPickerInput";
 
-import { NewProductFormInputs } from "../NewProductForm/NewProductForm";
+import { NewProductFormInputs } from "../ProductForm/ProductForm";
 
 import saleStyles from "./sale.module.scss";
-import styles from "../NewProductForm/new-product-form.module.scss";
+import styles from "../ProductForm/new-product-form.module.scss";
 import "react-day-picker/lib/style.css";
 
 interface ISaleProps {
@@ -14,6 +14,7 @@ interface ISaleProps {
   watch: (field: string) => unknown;
   setValue: any;
   errors: FieldErrors<NewProductFormInputs>;
+  choosedExpiredDay: Date | null;
 }
 
 export const Sale: React.FC<ISaleProps> = ({
@@ -21,10 +22,13 @@ export const Sale: React.FC<ISaleProps> = ({
   watch,
   setValue,
   errors,
+  choosedExpiredDay,
 }) => {
+  const [choosedDay, setChoosedDay] = useState(choosedExpiredDay);
   const watchSaleField = watch("sale");
 
   const handleDayClick = (day: any, { selected }: any) => {
+    setChoosedDay(day);
     setValue("saleExpiredDay", selected ? undefined : day.getTime() / 1000, {
       shouldValidate: true,
     });
@@ -52,25 +56,33 @@ export const Sale: React.FC<ISaleProps> = ({
       />
 
       {!!watchSaleField && !errors.sale && (
-        <DayPickerInput
-          {...register("saleExpiredDay", {
-            required: {
-              value: true,
-              message: "Choose the sale expired date",
-            },
+        <div
+          className={classnames({
+            [saleStyles["ErrorWrapper"]]: errors.saleExpiredDay,
           })}
-          onDayChange={handleDayClick}
-          style={{
-            color: "#040f0f",
-            position: "relative",
-          }}
-          overlayComponent={OverlayComponent}
-          dayPickerProps={{
-            modifiers: {
-              disabled: [{ before: new Date() }],
-            },
-          }}
-        />
+        >
+          <DayPickerInput
+            {...register("saleExpiredDay", {
+              required: {
+                value: true,
+                message: "Choose the sale expired date",
+              },
+            })}
+            onDayChange={handleDayClick}
+            // @ts-ignore
+            value={choosedDay}
+            style={{
+              color: "#040f0f",
+              position: "relative",
+            }}
+            overlayComponent={OverlayComponent}
+            dayPickerProps={{
+              modifiers: {
+                disabled: [{ before: new Date() }],
+              },
+            }}
+          />
+        </div>
       )}
     </div>
   );

@@ -4,6 +4,7 @@ export const PUBLIC_ROUTES = {
 };
 
 export const PRIVATE_ROUTES = {
-  GOODS: "/",
+  GOODS: "/goods",
   CREATE_PRODUCT: "/goods/create",
+  EDIT_PRODUCT: "/goods/:id",
 };
