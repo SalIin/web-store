@@ -12,11 +12,14 @@ import { Loader } from "../Loader/Loader";
 import { createProduct, generateId, updateProduct } from "../../utils";
 import styles from "./new-product-form.module.scss";
 import { storage } from "../../firebase";
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { getProductById } from "../../redux/selectors";
 import { IProduct } from "../../types";
 import { IInitialState } from "../../redux/reducers";
 import { PRIVATE_ROUTES } from "../../routes";
+import { Portal } from "../Portal/Portal";
+import { ModalCropImage } from "../ModalCropImage/ModalCropImage";
+import { usePortal } from "../../customHooks/usePortal";
 
 export interface NewProductFormInputs {
   title: string;
@@ -33,6 +36,7 @@ export const ProductForm: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
   const product: IProduct | null =
     useSelector((state: IInitialState) => getProductById(state, id)) || null;
+  const [previewImage, setPreviewImage] = useState(product ? product.img : "");
   const {
     register,
     handleSubmit,
@@ -53,6 +57,7 @@ export const ProductForm: React.FC = () => {
       saleExpiredDay: product ? new Date(product.saleExpiredDay * 1000) : null,
     },
   });
+  const { isOpen, openPortal, closePortal } = usePortal();
 
   const onSubmit = (data: any) => {
     setLoading(true);
@@ -132,8 +137,9 @@ export const ProductForm: React.FC = () => {
           setError={setError}
           clearErrors={clearErrors}
           watch={watch}
+          openPortal={openPortal}
           errors={errors}
-          previewImage={product ? product.img : ""}
+          previewImage={previewImage}
         />
         {errors.image && (
           <small className={styles["ProductForm-Error"]}>
@@ -193,7 +199,6 @@ export const ProductForm: React.FC = () => {
             {errors.price.message}
           </small>
         )}
-        {/* TODO: Fix datepicker error */}
         <Sale
           register={register}
           errors={errors}
@@ -227,6 +232,15 @@ export const ProductForm: React.FC = () => {
           {isLoading ? <Loader /> : product ? "Save" : "Create"}
         </Button>
       </form>
+      <Portal isOpen={isOpen}>
+        <ModalCropImage
+          openPortal={openPortal}
+          closePortal={closePortal}
+          setPreviewImage={setPreviewImage}
+          setValue={setValue}
+          previewImage={previewImage}
+        />
+      </Portal>
     </section>
   );
 };

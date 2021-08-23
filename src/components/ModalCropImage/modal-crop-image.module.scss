@@ -1,0 +1,29 @@
+@import "../../styles/mixines.scss";
+@import "../../styles/variables.scss";
+
+.Modal {
+  @include formStyles;
+  background-color: $secondary;
+  color: $primary;
+  width: auto;
+  max-width: 90%;
+
+  & > div:not(:first-child) {
+    margin-bottom: 0;
+  }
+
+  button {
+    width: 100%;
+    text-transform: uppercase;
+  }
+}
+.CropperContainer {
+  position: relative;
+  height: 500px;
+  width: 500px;
+  max-width: 100%;
+}
+
+.Error {
+  color: $primary-error;
+}

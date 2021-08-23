@@ -41,3 +41,25 @@
     height: 40px;
   }
 }
+
+.Wrapper {
+  display: flex;
+
+  & > button:last-child {
+    margin-left: 20px;
+    height: min-content;
+    padding: 10px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease-in-out;
+    margin-top: -10px;
+
+    &:hover {
+      background-color: $hover;
+    }
+
+    img {
+      height: 25px;
+      width: 25px;
+    }
+  }
+}

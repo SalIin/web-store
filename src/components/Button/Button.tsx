@@ -10,6 +10,7 @@ interface IButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   component: "button" | "link";
   variant: "contained" | "outlined";
   size?: "l" | "m";
+  color?: "dark" | "light";
   to?: string;
 }
 
@@ -19,6 +20,7 @@ export const Button: React.FC<IButtonProps> = ({
   to = PRIVATE_ROUTES.GOODS,
   variant,
   size = "l",
+  color = "light",
   ...restProps
 }) => {
   switch (component) {
@@ -27,6 +29,7 @@ export const Button: React.FC<IButtonProps> = ({
         <button
           className={classnames(styles.Button, {
             [styles[`Button_${size}`]]: size,
+            [styles[`Button_${color}`]]: color,
           })}
           {...restProps}
         >
@@ -38,6 +41,7 @@ export const Button: React.FC<IButtonProps> = ({
         <Link
           className={classnames(styles.Button, {
             [styles[`Button_${size}`]]: size,
+            [styles[`Button_${color}`]]: color,
           })}
           to={to}
         >

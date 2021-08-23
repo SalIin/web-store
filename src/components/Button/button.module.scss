@@ -30,3 +30,12 @@
   font-size: 0.8rem;
   height: $medium-button-height;
 }
+
+.Button_dark {
+  color: $primary;
+  border-color: $primary;
+  &:hover {
+    background-color: $primary;
+    color: #fff;
+  }
+}

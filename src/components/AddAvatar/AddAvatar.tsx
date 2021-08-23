@@ -8,6 +8,7 @@ import styles from "./add-avatar.module.scss";
 
 interface IAddAvatarProps {
   register: UseFormRegister<NewProductFormInputs>;
+  openPortal: VoidFunction;
   setValue: any;
   setError: any;
   clearErrors: any;
@@ -18,6 +19,7 @@ interface IAddAvatarProps {
 
 export const AddAvatar: React.FC<IAddAvatarProps> = ({
   register,
+  openPortal,
   setValue,
   setError,
   clearErrors,
@@ -61,7 +63,7 @@ export const AddAvatar: React.FC<IAddAvatarProps> = ({
   };
 
   return (
-    <>
+    <div className={styles.Wrapper}>
       <label
         htmlFor="file-input"
         className={classnames(styles.AddAvatar, {
@@ -88,6 +90,11 @@ export const AddAvatar: React.FC<IAddAvatarProps> = ({
           {...rest}
         />
       </label>
-    </>
+      {watchImageField.length || previewImage ? (
+        <button type="button" onClick={openPortal}>
+          <img src="/img/crop.svg" alt="Crop" />
+        </button>
+      ) : null}
+    </div>
   );
 };

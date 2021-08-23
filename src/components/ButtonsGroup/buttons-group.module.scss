@@ -6,6 +6,7 @@
   & > :first-child:first-child {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+    border-right: none;
   }
   & > :last-child:last-child {
     border-top-left-radius: 0;
