@@ -5,6 +5,8 @@ import classnames from "classnames";
 import { NewProductFormInputs } from "../ProductForm/ProductForm";
 
 import styles from "./add-avatar.module.scss";
+import { useEffect } from "react";
+import { getBase64 } from "../../utils";
 
 interface IAddAvatarProps {
   register: UseFormRegister<NewProductFormInputs>;
@@ -33,6 +35,7 @@ export const AddAvatar: React.FC<IAddAvatarProps> = ({
       message: "This field is required",
     },
   });
+
   const watchImageField = watch("image");
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -73,13 +76,7 @@ export const AddAvatar: React.FC<IAddAvatarProps> = ({
         title="Add an image"
       >
         <img
-          src={
-            watchImageField.length && !errors.image
-              ? URL.createObjectURL(watchImageField[0])
-              : previewImage
-              ? previewImage
-              : "/img/photo.svg"
-          }
+          src={!errors.image && previewImage ? previewImage : "/img/photo.svg"}
           alt="Avatar"
         />
         <input

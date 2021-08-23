@@ -83,9 +83,24 @@ export const getCroppedImg = async (
   // return canvas.toDataURL('image/jpeg');
 
   // As a blob
-  return new Promise((resolve) => {
-    canvas.toBlob((file) => {
-      resolve(URL.createObjectURL(file));
-    }, "image/jpeg");
+  return new Promise((resolve) => resolve(canvas.toDataURL()));
+  //  {
+  //   canvas.toDataURL((file) => {
+  //     resolve(URL.createObjectURL(file));
+  //   }, "image/jpeg");
+  // });
+};
+
+export const getBase64 = (file: File): Promise<string | ArrayBuffer | null> => {
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+
+  return new Promise((resolve, reject) => {
+    reader.onload = function () {
+      resolve(reader.result);
+    };
+    reader.onerror = function (error) {
+      reject(error);
+    };
   });
 };

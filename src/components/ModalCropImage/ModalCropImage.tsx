@@ -1,30 +1,25 @@
 import React, { useCallback, useState } from "react";
-import { UseFormSetValue } from "react-hook-form";
 import ClickAwayListener from "react-click-away-listener";
 import Cropper from "react-easy-crop";
 
 import { Button } from "../Button/Button";
 import { ButtonsGroup } from "../ButtonsGroup/ButtonsGroup";
 
-import { NewProductFormInputs } from "../ProductForm/ProductForm";
-
 import { getCroppedImg } from "../../utils";
 
 import styles from "./modal-crop-image.module.scss";
 
 interface IModalCropImageProps {
-  openPortal: VoidFunction;
   closePortal: VoidFunction;
-  setValue: UseFormSetValue<NewProductFormInputs>;
   setPreviewImage: (src: string) => void;
+  setCroppedImage: (src: string) => void;
   previewImage: string;
 }
 
 export const ModalCropImage: React.FC<IModalCropImageProps> = ({
-  openPortal,
   closePortal,
-  setValue,
   setPreviewImage,
+  setCroppedImage,
   previewImage,
 }) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -48,8 +43,9 @@ export const ModalCropImage: React.FC<IModalCropImageProps> = ({
     }
     setCropError("");
     const croppedImage = await getCroppedImg(previewImage, croppedAreaPixels);
-    // setPreviewImage(croppedImage);
-    setValue("image", croppedImage);
+    setPreviewImage(croppedImage);
+    setCroppedImage(croppedImage);
+    closePortal();
   };
 
   return (

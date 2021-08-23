@@ -9,7 +9,12 @@ import { useForm } from "react-hook-form";
 import { Button } from "../Button/Button";
 import { Loader } from "../Loader/Loader";
 
-import { createProduct, generateId, updateProduct } from "../../utils";
+import {
+  createProduct,
+  generateId,
+  getBase64,
+  updateProduct,
+} from "../../utils";
 import styles from "./new-product-form.module.scss";
 import { storage } from "../../firebase";
 import { useHistory, useParams } from "react-router-dom";
@@ -20,12 +25,13 @@ import { PRIVATE_ROUTES } from "../../routes";
 import { Portal } from "../Portal/Portal";
 import { ModalCropImage } from "../ModalCropImage/ModalCropImage";
 import { usePortal } from "../../customHooks/usePortal";
+import { useEffect } from "react";
 
 export interface NewProductFormInputs {
   title: string;
   image: string;
   price: string;
-  sale?: number | null;
+  sale?: number | string | null;
   description?: string;
   saleExpiredDay?: number | null | Date;
 }
@@ -37,6 +43,7 @@ export const ProductForm: React.FC = () => {
   const product: IProduct | null =
     useSelector((state: IInitialState) => getProductById(state, id)) || null;
   const [previewImage, setPreviewImage] = useState(product ? product.img : "");
+  const [croppedImage, setCroppedImage] = useState("");
   const {
     register,
     handleSubmit,
@@ -54,42 +61,86 @@ export const ProductForm: React.FC = () => {
       description: product ? product.description : "",
       price: product ? product.price.toString() : "",
       sale: product ? product.sale : null,
-      saleExpiredDay: product ? new Date(product.saleExpiredDay * 1000) : null,
+      saleExpiredDay: product!.saleExpiredDay
+        ? new Date(product!.saleExpiredDay * 1000)
+        : new Date(),
     },
   });
   const { isOpen, openPortal, closePortal } = usePortal();
 
+  useEffect(() => {
+    if (getValues().image.length) {
+      // @ts-ignore
+      getBase64(getValues().image[0]).then(setPreviewImage);
+    }
+  }, [getValues().image.length]);
+
   const onSubmit = (data: any) => {
     setLoading(true);
+    data.sale = !data.sale ? "" : data.sale;
 
+    // Check if the new product should be create
     if (!product) {
       const img = data.image[0];
       delete data.image;
 
-      const uploadTask = storage.ref(`images/${img.name}`).put(img);
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {},
-        (error) => console.log(error),
-        () => {
-          storage
-            .ref("images")
-            .child(img.name)
-            .getDownloadURL()
-            .then((url) => {
-              createProduct({
-                id: generateId(),
-                img: url,
-                ...data,
-              }).then(() => {
-                setLoading(false);
-                reset();
-                redirectTo(PRIVATE_ROUTES.GOODS);
+      // Check if the image was cropped
+      if (croppedImage) {
+        const imgId = generateId();
+        const uploadTask = storage
+          .ref(`images/${imgId}`)
+          .putString(croppedImage, "data_url");
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {},
+          (error) => console.log(error),
+          () => {
+            storage
+              .ref("images")
+              .child(imgId)
+              .getDownloadURL()
+              .then((url) => {
+                createProduct({
+                  id: generateId(),
+                  img: url,
+                  ...data,
+                }).then(() => {
+                  setLoading(false);
+                  reset();
+                  redirectTo(PRIVATE_ROUTES.GOODS);
+                });
               });
-            });
-        }
-      );
+          }
+        );
+      } else {
+        // The image wasn't cropped
+        const uploadTask = storage.ref(`images/${img.name}`).put(img);
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {},
+          (error) => console.log(error),
+          () => {
+            storage
+              .ref("images")
+              .child(img.name)
+              .getDownloadURL()
+              .then((url) => {
+                createProduct({
+                  id: generateId(),
+                  img: url,
+                  ...data,
+                }).then(() => {
+                  setLoading(false);
+                  reset();
+                  redirectTo(PRIVATE_ROUTES.GOODS);
+                });
+              });
+          }
+        );
+      }
     } else if (product) {
+      // The product already exists
       const img = data.image[0] || product.img;
       data.saleExpiredDay =
         typeof getValues().saleExpiredDay === "number"
@@ -97,12 +148,41 @@ export const ProductForm: React.FC = () => {
           : product.saleExpiredDay;
       delete data.image;
 
+      // Check if the image already exists
       if (typeof img === "string") {
         data.img = product.img;
-        updateProduct(product.id, data).then(() => {
-          setLoading(false);
-          redirectTo(PRIVATE_ROUTES.GOODS);
-        });
+
+        // Check if we have new cropped image
+        if (croppedImage) {
+          const imgId = generateId();
+          const uploadTask = storage
+            .ref(`images/${imgId}`)
+            .putString(croppedImage, "data_url");
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {},
+            (error) => console.log(error),
+            () => {
+              storage
+                .ref("images")
+                .child(imgId)
+                .getDownloadURL()
+                .then((url) => {
+                  data.img = url;
+                  updateProduct(product.id, data).then(() => {
+                    setLoading(false);
+                    redirectTo(PRIVATE_ROUTES.GOODS);
+                  });
+                });
+            }
+          );
+        } else {
+          // We don't have the cropped image
+          updateProduct(product.id, data).then(() => {
+            setLoading(false);
+            redirectTo(PRIVATE_ROUTES.GOODS);
+          });
+        }
       } else {
         const uploadTask = storage.ref(`images/${img.name}`).put(img);
         uploadTask.on(
@@ -205,7 +285,9 @@ export const ProductForm: React.FC = () => {
           watch={watch}
           setValue={setValue}
           choosedExpiredDay={
-            product ? new Date(product.saleExpiredDay * 1000) : null
+            product!.saleExpiredDay
+              ? new Date(product!.saleExpiredDay * 1000)
+              : null
           }
         />
         {errors.sale && (
@@ -234,10 +316,9 @@ export const ProductForm: React.FC = () => {
       </form>
       <Portal isOpen={isOpen}>
         <ModalCropImage
-          openPortal={openPortal}
           closePortal={closePortal}
           setPreviewImage={setPreviewImage}
-          setValue={setValue}
+          setCroppedImage={setCroppedImage}
           previewImage={previewImage}
         />
       </Portal>
