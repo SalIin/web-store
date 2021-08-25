@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import moment from "moment";
 
-import { deleteProduct } from "../utils";
+import { deleteProduct, notify } from "../utils";
 import { deleteProductFromStore } from "../redux/actionCreators";
 
 import { IProduct } from "../types";
@@ -30,9 +30,10 @@ export const useProductCard = (
   const toggleMenu = () => setMenuOpened((prevState) => !prevState);
   const handleClickAwayMenu = () => setMenuOpened(false);
   const handleDeleteProduct = (idToDelete: IProduct["id"]) => {
-    deleteProduct(idToDelete).then(() =>
-      dispatch(deleteProductFromStore(idToDelete))
-    );
+    deleteProduct(idToDelete).then(() => {
+      dispatch(deleteProductFromStore(idToDelete));
+      notify("success", "Product deleted!");
+    });
   };
 
   // Helper functions

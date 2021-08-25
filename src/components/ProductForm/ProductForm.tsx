@@ -1,31 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useHistory, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useForm } from "react-hook-form";
+import { storage } from "../../firebase";
 import classnames from "classnames";
 
+// Redux
+import { getProductById } from "../../redux/selectors";
+import { IInitialState } from "../../redux/reducers";
+
+// Components
 import { AddAvatar } from "../AddAvatar/AddAvatar";
 import { Sale } from "../Sale/Sale";
-
-import { useForm } from "react-hook-form";
 import { Button } from "../Button/Button";
 import { Loader } from "../Loader/Loader";
+import { Portal } from "../Portal/Portal";
+import { ModalCropImage } from "../ModalCropImage/ModalCropImage";
+
+// Custom hooks
+import { usePortal } from "../../customHooks/usePortal";
+
+import { IProduct } from "../../types";
+import { PRIVATE_ROUTES } from "../../routes";
 
 import {
   createProduct,
   generateId,
   getBase64,
+  notify,
   updateProduct,
 } from "../../utils";
+
 import styles from "./new-product-form.module.scss";
-import { storage } from "../../firebase";
-import { useHistory, useParams } from "react-router-dom";
-import { getProductById } from "../../redux/selectors";
-import { IProduct } from "../../types";
-import { IInitialState } from "../../redux/reducers";
-import { PRIVATE_ROUTES } from "../../routes";
-import { Portal } from "../Portal/Portal";
-import { ModalCropImage } from "../ModalCropImage/ModalCropImage";
-import { usePortal } from "../../customHooks/usePortal";
-import { useEffect } from "react";
+import { MAX_DIGIT_REGEXP } from "../../constants";
 
 export interface NewProductFormInputs {
   title: string;
@@ -61,9 +68,10 @@ export const ProductForm: React.FC = () => {
       description: product ? product.description : "",
       price: product ? product.price.toString() : "",
       sale: product ? product.sale : null,
-      saleExpiredDay: product!.saleExpiredDay
-        ? new Date(product!.saleExpiredDay * 1000)
-        : new Date(),
+      saleExpiredDay:
+        product && product!.saleExpiredDay
+          ? new Date(product!.saleExpiredDay * 1000)
+          : new Date(),
     },
   });
   const { isOpen, openPortal, closePortal } = usePortal();
@@ -73,10 +81,11 @@ export const ProductForm: React.FC = () => {
       // @ts-ignore
       getBase64(getValues().image[0]).then(setPreviewImage);
     }
-  }, [getValues().image.length]);
+  }, [getValues().image]);
 
   const onSubmit = (data: any) => {
     setLoading(true);
+    data.price = +data.price;
     data.sale = !data.sale ? "" : data.sale;
 
     // Check if the new product should be create
@@ -109,6 +118,7 @@ export const ProductForm: React.FC = () => {
                   setLoading(false);
                   reset();
                   redirectTo(PRIVATE_ROUTES.GOODS);
+                  notify("success", "Product created!");
                 });
               });
           }
@@ -134,6 +144,7 @@ export const ProductForm: React.FC = () => {
                   setLoading(false);
                   reset();
                   redirectTo(PRIVATE_ROUTES.GOODS);
+                  notify("success", "Product created!");
                 });
               });
           }
@@ -181,6 +192,7 @@ export const ProductForm: React.FC = () => {
           updateProduct(product.id, data).then(() => {
             setLoading(false);
             redirectTo(PRIVATE_ROUTES.GOODS);
+            notify("success", "Product edited!");
           });
         }
       } else {
@@ -199,6 +211,7 @@ export const ProductForm: React.FC = () => {
                 updateProduct(product.id, data).then(() => {
                   setLoading(false);
                   redirectTo(PRIVATE_ROUTES.GOODS);
+                  notify("success", "Product edited!");
                 });
               });
           }
@@ -261,14 +274,13 @@ export const ProductForm: React.FC = () => {
             [styles["ProductForm-Control_withError"]]: errors.price,
           })}
           {...register("price", {
-            valueAsNumber: true,
-            required: {
-              value: true,
-              message: "This field is required",
+            required: "This field is required",
+            min: {
+              value: 1,
+              message: "You have to use positive numbers",
             },
             pattern: {
-              // TODO: Replace all regexp with constant
-              value: /^\d{1,8}(\.\d{0,2})?$/,
+              value: MAX_DIGIT_REGEXP,
               message:
                 "You have to use positive numbers. Maximum price is 99999999.99",
             },
@@ -285,9 +297,9 @@ export const ProductForm: React.FC = () => {
           watch={watch}
           setValue={setValue}
           choosedExpiredDay={
-            product!.saleExpiredDay
+            product && product!.saleExpiredDay
               ? new Date(product!.saleExpiredDay * 1000)
-              : null
+              : new Date()
           }
         />
         {errors.sale && (

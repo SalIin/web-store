@@ -8,7 +8,6 @@ export const GoodsPage: React.FC = () => {
   return (
     <MainLayout>
       <GoodsList />
-      <FloatingButton />
     </MainLayout>
   );
 };

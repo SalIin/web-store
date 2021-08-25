@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 
 import { GoodsPage } from "../../pages/GoodsPage/GoodsPage";
 import { SigninPage } from "../../pages/SigninPage/SigninPage";
@@ -27,6 +27,7 @@ export const AppRouter: React.FC = () => {
           component={NewProductPage}
           exact
         />
+        <Redirect to={PRIVATE_ROUTES.GOODS} />
       </Switch>
     </BrowserRouter>
   );

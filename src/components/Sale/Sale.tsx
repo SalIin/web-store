@@ -62,12 +62,7 @@ export const Sale: React.FC<ISaleProps> = ({
           })}
         >
           <DayPickerInput
-            {...register("saleExpiredDay", {
-              required: {
-                value: true,
-                message: "Choose the sale expired date",
-              },
-            })}
+            {...register("saleExpiredDay")}
             onDayChange={handleDayClick}
             // @ts-ignore
             value={choosedDay}

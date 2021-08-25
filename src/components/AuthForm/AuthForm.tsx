@@ -1,18 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import classnames from "classnames";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
+// Components
 import { ButtonsGroup } from "../ButtonsGroup/ButtonsGroup";
+import { Loader } from "../Loader/Loader";
+import { Button } from "../Button/Button";
+
+import { notify } from "../../utils";
 
 import { useAuth } from "../../customHooks/useAuth";
 
 import { PRIVATE_ROUTES, PUBLIC_ROUTES } from "../../routes";
 
 import styles from "./auth-form.module.scss";
-import { useState } from "react";
-import { Loader } from "../Loader/Loader";
-import { Button } from "../Button/Button";
 
 interface FormInputs {
   email: string;
@@ -40,10 +42,12 @@ export const AuthForm: React.FC = () => {
       await signin(email, password);
       redirectTo(PRIVATE_ROUTES.GOODS);
       setLoading(false);
+      notify("success", "Successfully signed in!");
     } else if (pathname === PUBLIC_ROUTES.SIGNUP) {
       await signup(email, password);
       redirectTo(PRIVATE_ROUTES.GOODS);
       setLoading(false);
+      notify("success", "Successfully signed up!");
     }
   };
 

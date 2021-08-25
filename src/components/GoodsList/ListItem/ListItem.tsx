@@ -32,7 +32,6 @@ export const ListItem: React.FC<IProduct> = ({
     countSale,
   } = useProductCard(saleExpiredDay, price);
   const { path } = useRouteMatch();
-
   return (
     <li className={styles.ListItem}>
       <div className={styles.OverflowWrapper}>
@@ -74,7 +73,7 @@ export const ListItem: React.FC<IProduct> = ({
           </div>
           <div className={styles["InfoBlock-Price"]}>
             <h4>
-              &#36;{sale && isSaleDate ? countSale(sale) : price.toFixed(2)}
+              &#36;{sale && isSaleDate ? countSale(sale) : +price.toFixed(2)}
             </h4>
             {!!sale && isSaleDate && (
               <small>

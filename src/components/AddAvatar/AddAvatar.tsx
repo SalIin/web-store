@@ -1,12 +1,10 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { UseFormRegister, FieldErrors } from "react-hook-form";
 import classnames from "classnames";
 
 import { NewProductFormInputs } from "../ProductForm/ProductForm";
 
 import styles from "./add-avatar.module.scss";
-import { useEffect } from "react";
-import { getBase64 } from "../../utils";
 
 interface IAddAvatarProps {
   register: UseFormRegister<NewProductFormInputs>;
@@ -22,7 +20,6 @@ interface IAddAvatarProps {
 export const AddAvatar: React.FC<IAddAvatarProps> = ({
   register,
   openPortal,
-  setValue,
   setError,
   clearErrors,
   watch,
@@ -35,6 +32,7 @@ export const AddAvatar: React.FC<IAddAvatarProps> = ({
       message: "This field is required",
     },
   });
+  const [newImg, setNewImg] = useState<string>();
 
   const watchImageField = watch("image");
 
@@ -54,6 +52,7 @@ export const AddAvatar: React.FC<IAddAvatarProps> = ({
           image.width <= 4000
         ) {
           clearErrors("image");
+          setNewImg(imageUrl);
           onChange(e);
         } else {
           setError("image", {
@@ -76,7 +75,13 @@ export const AddAvatar: React.FC<IAddAvatarProps> = ({
         title="Add an image"
       >
         <img
-          src={!errors.image && previewImage ? previewImage : "/img/photo.svg"}
+          src={
+            !errors.image && previewImage
+              ? previewImage
+              : newImg
+              ? newImg
+              : "/img/photo.svg"
+          }
           alt="Avatar"
         />
         <input

@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { db } from "../firebase";
 import { IProduct } from "../types";
 
@@ -68,27 +69,15 @@ export const getCroppedImg = async (
   );
   const data = ctx!.getImageData(0, 0, safeArea, safeArea);
 
-  // set canvas width to final desired crop size - this will clear existing context
   canvas.width = pixelCrop.width;
   canvas.height = pixelCrop.height;
 
-  // paste generated rotate image with correct offsets for x,y crop values.
   ctx!.putImageData(
     data,
     Math.round(0 - safeArea / 2 + image.width * 0.5 - pixelCrop.x),
     Math.round(0 - safeArea / 2 + image.height * 0.5 - pixelCrop.y)
   );
-
-  // As Base64 string
-  // return canvas.toDataURL('image/jpeg');
-
-  // As a blob
   return new Promise((resolve) => resolve(canvas.toDataURL()));
-  //  {
-  //   canvas.toDataURL((file) => {
-  //     resolve(URL.createObjectURL(file));
-  //   }, "image/jpeg");
-  // });
 };
 
 export const getBase64 = (file: File): Promise<string | ArrayBuffer | null> => {
@@ -103,4 +92,18 @@ export const getBase64 = (file: File): Promise<string | ArrayBuffer | null> => {
       reject(error);
     };
   });
+};
+
+export const notify = (status: "success" | "error", text: string) => {
+  switch (status) {
+    case "success":
+      toast.success(text);
+      break;
+    case "error":
+      toast.error(text);
+      break;
+    default:
+      toast(text);
+      break;
+  }
 };
