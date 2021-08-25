@@ -107,3 +107,11 @@ export const notify = (status: "success" | "error", text: string) => {
       break;
   }
 };
+
+export const getDaysToEndOfSale = (saleExpiredDay: number | null) => {
+  const today = Date.now();
+  if (saleExpiredDay) {
+    const difference = saleExpiredDay * 1000 - today;
+    return Math.ceil(difference / (1000 * 3600 * 24));
+  }
+};

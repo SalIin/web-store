@@ -13,6 +13,7 @@ import { notify } from "../../utils";
 import { useAuth } from "../../customHooks/useAuth";
 
 import { PRIVATE_ROUTES, PUBLIC_ROUTES } from "../../routes";
+import { EMAIL_REGEXP } from "../../constants";
 
 import styles from "./auth-form.module.scss";
 
@@ -20,8 +21,6 @@ interface FormInputs {
   email: string;
   password: string;
 }
-
-// TODO: Add login / sign up error handlers
 
 export const AuthForm: React.FC = () => {
   const { pathname } = useLocation();
@@ -39,15 +38,25 @@ export const AuthForm: React.FC = () => {
     setLoading(true);
 
     if (pathname === PUBLIC_ROUTES.SIGNIN) {
-      await signin(email, password);
-      redirectTo(PRIVATE_ROUTES.GOODS);
-      setLoading(false);
-      notify("success", "Successfully signed in!");
+      const response = await signin(email, password);
+      if (response.code) {
+        setLoading(false);
+        notify("error", response.message);
+      } else {
+        redirectTo(PRIVATE_ROUTES.GOODS);
+        setLoading(false);
+        notify("success", "Successfully signed in!");
+      }
     } else if (pathname === PUBLIC_ROUTES.SIGNUP) {
-      await signup(email, password);
-      redirectTo(PRIVATE_ROUTES.GOODS);
-      setLoading(false);
-      notify("success", "Successfully signed up!");
+      const response = await signup(email, password);
+      if (response.code) {
+        setLoading(false);
+        notify("error", response.message);
+      } else {
+        redirectTo(PRIVATE_ROUTES.GOODS);
+        setLoading(false);
+        notify("success", "Successfully signed up!");
+      }
     }
   };
 
@@ -75,7 +84,11 @@ export const AuthForm: React.FC = () => {
         </Link>
       </ButtonsGroup>
 
-      <form className={styles.AuthForm} onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className={styles.AuthForm}
+        onSubmit={handleSubmit(onSubmit)}
+        noValidate
+      >
         <input
           type="email"
           className={classnames(styles["AuthForm-Control"], {
@@ -83,12 +96,9 @@ export const AuthForm: React.FC = () => {
           })}
           placeholder="Email Address (required)"
           {...register("email", {
-            required: {
-              value: true,
-              message: "This field is required",
-            },
+            required: "This field is required",
             pattern: {
-              value: /^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/,
+              value: EMAIL_REGEXP,
               message: "Invalid email",
             },
           })}

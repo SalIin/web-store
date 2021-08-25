@@ -20,9 +20,6 @@ export const useProductCard = (
   const isSaleDate = saleExpiredDay
     ? moment(saleExpiredDay).isAfter(new Date().getTime() / 1000)
     : null;
-  const expiredDate = saleExpiredDay
-    ? moment.unix(saleExpiredDay).format("DD.MM.YYYY")
-    : null;
 
   // Handlers
   const toggleFullDescription = () =>
@@ -45,7 +42,6 @@ export const useProductCard = (
     isFullDescriptionShown,
     isMenuOpened,
     isSaleDate,
-    expiredDate,
     toggleFullDescription,
     handleClickAwayMenu,
     handleDeleteProduct,

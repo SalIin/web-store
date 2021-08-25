@@ -8,8 +8,7 @@ import { IProduct } from "../../../types";
 
 import styles from "./list-item.module.scss";
 import { Link, useRouteMatch } from "react-router-dom";
-
-// TODO: Высчитать кол-во дней до окончания скидки
+import { getDaysToEndOfSale } from "../../../utils";
 
 export const ListItem: React.FC<IProduct> = ({
   id,
@@ -23,14 +22,13 @@ export const ListItem: React.FC<IProduct> = ({
   const {
     isFullDescriptionShown,
     isMenuOpened,
-    isSaleDate,
-    expiredDate,
     toggleFullDescription,
     handleClickAwayMenu,
     handleDeleteProduct,
     toggleMenu,
     countSale,
   } = useProductCard(saleExpiredDay, price);
+
   const { path } = useRouteMatch();
   return (
     <li className={styles.ListItem}>
@@ -72,24 +70,27 @@ export const ListItem: React.FC<IProduct> = ({
             </div>
           </div>
           <div className={styles["InfoBlock-Price"]}>
-            <h4>
-              &#36;{sale && isSaleDate ? countSale(sale) : +price.toFixed(2)}
-            </h4>
-            {!!sale && isSaleDate && (
+            <h4>&#36;{sale ? countSale(sale) : +price.toFixed(2)}</h4>
+            {!!sale && (
               <small>
                 <sub>&#36;{price.toFixed(2)}</sub>
               </small>
             )}
           </div>
-          {!!sale && isSaleDate && (
+          {!!sale && (
             <div className={styles["InfoBlock-ExpireDate"]}>
-              <small>Sale expire date: {expiredDate}</small>
+              <small>
+                {getDaysToEndOfSale(saleExpiredDay) === 0
+                  ? "Discount ends today!"
+                  : `Discount ends on ${getDaysToEndOfSale(
+                      saleExpiredDay
+                    )} days`}
+              </small>
             </div>
           )}
           <p
             className={classnames(styles["InfoBlock-Description"], {
-              [styles["InfoBlock-Description_withTopMargin"]]:
-                !sale || !isSaleDate,
+              [styles["InfoBlock-Description_withTopMargin"]]: !sale,
             })}
           >
             {description && `${description.slice(0, 65)}...`}
